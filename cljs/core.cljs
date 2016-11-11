@@ -11,7 +11,7 @@
 
 (enable-console-print!)
 
-(println "asd")
+(println "This should work")
 
 (defonce app-state (atom {:busses []
 					   	  :stations []))
