@@ -11,3 +11,13 @@
   :source-paths ["src" "target/classes"]
   :clean-targets ["out" "release"]
   :target-path "target")
+  :plugins  [
+    [lein-cljsbuild "1.1.3" :exclusions [[org.clojure/clojure]]]]
+  :cljsbuild {:builds
+    [{:id "development"
+      :source-paths ["cljs"]
+      :compiler {:output-to "resources/public/js/compiled/techfest.min.js"
+                 :main chatpiper-om.core
+                 :optimizations :advanced
+                 :externs ["resources/public/js/externs.js"]
+                 :pretty-print false}}]}
