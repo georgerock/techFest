@@ -31,23 +31,18 @@
 (defrecord Buss [id coords number])
 (defrecord Station [id coords])
 
-(defn json-xhr [{:keys [method url data on-complete token]}]
- (let [xhr (XhrIo.)
-	   content-type (if (= method "GET")
-						"application/json"
-						"application/x-www-form-urlencoded-data; charset=UTF8")]
-	 (events/listen xhr goog.net.EventType.COMPLETE
-		 (fn [e]
-			 (on-complete (js->clj (if (or (= method "GET") (= url "/auth"))
-									   (.getResponseJson xhr)
-									   (.getResponse xhr))))))
-	 (if token
-		 (. xhr
-		 (send url method (when data (-> (clj->js data) (Map.) (QueryData.createFromMap) (.toString)))
-			 #js {"Content-Type" content-type "Authorization" token}))
-		 (. xhr
-		 (send url method (when data (-> (clj->js data) (Map.) (QueryData.createFromMap) (.toString)))
-			 #js {"Content-Type" content-type})))))
+(defn json-xhr [{:keys [method url data on-complete]}]
+	(let [xhr (XhrIo.)
+		  content-type (if (= method "GET")
+   						"application/json"
+   						"application/x-www-form-urlencoded-data; charset=UTF8")]
+		(events/listen xhr goog.net.EventType.COMPLETE
+			(fn [e]
+				(on-complete (js->clj (if (= method "GET")
+										  (.getResponseJson xhr)
+										  (.getResponse xhr))))))
+		(.send url method (when data (-> (clj->js data) (Map.) (QueryData.createFromMap) (.toString)))
+		 	#js {"Content-Type" content-type})))
 
 (defn xhr-request [method url data on-complete token]
 (json-xhr
